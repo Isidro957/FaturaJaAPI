@@ -11,15 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+      if (!Schema::hasTable('users')) {
+          Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id_area');
+            $table->foreign('user_id_area')->references('id')->on('areas');
             $table->string('name');
+            $table->string('profile_photo_path', 2048)->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
-        });
+      });
+    }
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();

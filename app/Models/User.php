@@ -6,7 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
+#use App\Models\Role;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -18,7 +18,9 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'user_id_area',
         'name',
+        'profile_photo_path',
         'email',
         'password',
     ];
@@ -44,5 +46,29 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+
+    }
+
+    public function roles(){
+
+      return $this->belongsToMany(Role::class,'role__users');
+    }
+
+    public function hasAccess(array $permissions)
+    {
+      foreach ($this->roles as $role) {
+      if ($role->hasAccess($permissions)) {
+      return true;
+      }
+
+      }
+
+        return false;
+    }
+
+    public function inRole($roleSlug)
+    {
+
+        return $this->roles()->where('slug',$roleSlug)->count()==1;
     }
 }

@@ -12,7 +12,6 @@ class Areas extends Model
     'org_id',
     'nome_area',
     'slogan_area',
-    'slogan_area',
     'telefone_area',
     'email_area',
     'descricao_area',

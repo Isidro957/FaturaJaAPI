@@ -19,7 +19,7 @@ return new class extends Migration
           $table->string('telefone_org')->unique();
           $table->string('email_org')->unique();
           $table->string('provincia_org', 2048)->nullable();
-          $table->string('tipo_org', 2048)->nullable(); #Públia ou Privada
+          $table->string('regime_org', 2048)->nullable(); #Públia ou Privada
           $table->string('descricao_org', 2048)->nullable();
           $table->timestamps();
         });

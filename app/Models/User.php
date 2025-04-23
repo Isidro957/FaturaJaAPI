@@ -23,6 +23,7 @@ class User extends Authenticatable
         'profile_photo_path',
         'email',
         'password',
+        'condicao_user',
     ];
 
     /**

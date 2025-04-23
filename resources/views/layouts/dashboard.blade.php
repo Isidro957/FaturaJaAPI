@@ -59,6 +59,19 @@
                             <span class="text-[#0E3254] font-semibold text-sm md:text-base">Página inicial</span>
                         </a>
                     </li>
+
+                    <li class="mb-1">
+                        <a href="{{url('/organization')}}"
+                            class="flex items-center gap-3 px-4 py-3 rounded-lg menu-item hover:bg-gray-100"
+                            data-img-default="{{ asset('assets/icones/icones dasboard/pagina inicial/Registro de Atividades/inativo.svg')}}"
+                            data-img-hover="{{ asset('assets/icones/icones dasboard/pagina inicial/Registro de Atividades/ativo.svg')}}"
+                            data-page="registro">
+                            <img src="{{ asset('assets/icones/icones dasboard/pagina inicial/Registro de Atividades/inativo.svg')}}"
+                                alt="" class="w-5 h-5 md:w-6 md:h-6 menu-icon">
+                            <span class="text-[#0E3254] font-semibold text-sm md:text-base">Organizações</span>
+                        </a>
+                    </li>
+
                     <li class="mb-1">
                         <a href="/registrar-actividade"
                             class="flex items-center gap-3 px-4 py-3 rounded-lg menu-item hover:bg-gray-100"
@@ -125,7 +138,7 @@
                                 <span class="font-semibold">Logout</span>
                             </button>
                         </form>
- 
+
                     </li>
                 </ul>
             </nav>

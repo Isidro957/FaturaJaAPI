@@ -28,8 +28,10 @@ class OrganizacoesFormRequest extends FormRequest
           'telefone_org' => ['required', 'string', 'max:255'],
           'email_org' => ['required', 'string', 'email', 'max:255', 'unique:organizacoes'],
           'provincia_org'  => ['string'],
-          'tipo_org'  => ['string'],
+          'regime_org'  => ['string'],
           'descricao_org'  => ['string'],
+          #'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        #  'password' => ['required', 'string', 'min:8', 'confirmed'],
 
         ];
     }

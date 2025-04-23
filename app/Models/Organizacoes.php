@@ -15,7 +15,7 @@ class Organizacoes extends Model
     'telefone_org',
     'email_org',
     'provincia_org',
-    'tipo_org',
+    'regime_org',
     'descricao_org'
   ];
   protected $guarded =[];

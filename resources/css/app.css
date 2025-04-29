@@ -1,3 +1,42 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@layer components {
+    .form-inputs {
+        @apply w-full px-3 py-2 text-sm font-normal text-gray-700 transition-all duration-200 ease-in-out bg-white border border-gray-300 border-solid rounded-lg bg-clip-padding focus:border-orange-300 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow;
+    }
+
+    .form-labels {
+        @apply p-1 text-sm font-light;
+    }
+
+    .in-line {
+        @apply flex gap-2;
+    }
+
+    .with-labels {
+        @apply flex flex-col w-full;
+    }
+
+    .box-style {
+        @apply bg-white w-[90%] p-4 shadow-md rounded-lg border border-gray-200;
+    }
+
+    .section-title {
+        @apply py-3 text-lg font-semibold text-center text-gray-700;
+    }
+
+    .table-heade-item {
+        @apply p-3 text-sm font-semibold text-gray-700 border;
+    }
+
+    .table-body-item {
+        @apply p-2 text-sm font-light text-center text-gray-700 border;
+    }
+
+    .table-rows {
+        @apply hover:bg-[#e4e4e444] transition-all duration-200 ease-in-out;
+    }
+}

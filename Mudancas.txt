@@ -1,0 +1,3 @@
+Criação do seeder User, Role_users, Organizacao, Area.
+criaçao de Moddel, Controller, Migrations de Documentos.
+Crud para cadastro de Documentos com operações: criar, listar, editar e apagar.

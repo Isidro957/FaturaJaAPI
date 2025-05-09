@@ -2,41 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer components {
-    .form-inputs {
-        @apply w-full px-3 py-2 text-sm font-normal text-gray-700 transition-all duration-200 ease-in-out bg-white border border-gray-300 border-solid rounded-lg bg-clip-padding focus:border-orange-300 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow;
+
+    /* table styles */
+    .t-header {
+        @apply px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase
     }
 
-    .form-labels {
-        @apply p-1 text-sm font-light;
+    .t-cell {
+        @apply px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800
     }
 
-    .in-line {
-        @apply flex gap-2;
+    /* sidebar styles */
+    .menu-item {
+        @apply flex items-center gap-4 p-3 text-gray-700 rounded-lg hover:bg-gray-100 transition-all
     }
 
-    .with-labels {
-        @apply flex flex-col w-full;
+    .menu-icon {
+        @apply w-5 h-5 text-gray-500
     }
 
-    .box-style {
-        @apply bg-white w-[90%] p-4 shadow-md rounded-lg border border-gray-200;
+    input {
+        @apply py-1.5 sm:py-2 px-3 ps-9 block w-full border-gray-200 border rounded-lg sm:text-sm focus:z-10 disabled:opacity-50 disabled:pointer-events-none
     }
+}
 
-    .section-title {
-        @apply py-3 text-lg font-semibold text-center text-gray-700;
-    }
+/* Estilo para controlar os submenus quando a sidebar está colapsada */
+.sidebar.collapsed .submenu {
+    display: none !important;
+    /* Força a ocultação quando a sidebar está colapsada */
+}
 
-    .table-heade-item {
-        @apply p-3 text-sm font-semibold text-gray-700 border;
-    }
-
-    .table-body-item {
-        @apply p-2 text-sm font-light text-center text-gray-700 border;
-    }
-
-    .table-rows {
-        @apply hover:bg-[#e4e4e444] transition-all duration-200 ease-in-out;
-    }
+/* Estilo para o menu de perfil flutuante */
+.sidebar.collapsed+.flex-1 .submenu-dropdown {
+    position: absolute;
+    left: 4rem;
+    /* Posiciona o dropdown à direita da sidebar colapsada */
+    top: 0;
+    min-width: 200px;
+    z-index: 50;
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f1f1f1;
 }

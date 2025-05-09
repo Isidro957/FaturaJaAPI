@@ -7,14 +7,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/formularios', function () {
-    return view('form-models');
-});
-
-Route::get('/tabelas', function () {
-    return view('table-model');
-});
-
 Auth::routes();
 
 Route::resource('/organization', OrganizacoesController::class);

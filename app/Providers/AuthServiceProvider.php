@@ -11,9 +11,6 @@ class AuthServiceProvider extends ServiceProvider
      * Register services.
      */
 
-     protected $policies = [
-         'App\Models\User' => 'App\Policies\UserPolicy',
-     ];
     public function register(): void
     {
         //

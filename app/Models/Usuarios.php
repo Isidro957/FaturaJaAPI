@@ -6,13 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Usuarios extends Model
 {
-  protected $table = 'role__users';
+  protected $table = 'role_users';
   protected $fillable =[
-    'user_id_area',
-    'name',
-    'profile_photo_path',
-    'email',
-    'password',
+        'nome',
+        'email',
+        'empresa_id',
+        'auth0_id',
+        'role',
   ];
   protected $guarded =[];
 }
+
+

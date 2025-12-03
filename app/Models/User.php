@@ -2,74 +2,43 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
-#use App\Models\Role;
+use App\Models\Traits\BelongsToEmpresa;
+
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+    use BelongsToEmpresa;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
-        'user_id_area',
-        'name',
-        'profile_photo_path',
+        'nome',
         'email',
-        'password',
-        'condicao_user',
+        'auth0_id',
+        'tenant_id',
+        'avatar',
+        'role',
+        
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    public function tenant()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-
+        return $this->belongsTo(Tenant::class);
     }
 
-    public function roles(){
-
-      return $this->belongsToMany(Role::class,'role__users');
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'role_users');
     }
 
-    public function hasAccess(array $permissions)
+    public function hasRole($roleName)
     {
-      foreach ($this->roles as $role) {
-      if ($role->hasAccess($permissions)) {
-      return true;
-      }
-
-      }
-
-        return false;
-    }
-
-    public function inRole($roleSlug)
-    {
-
-        return $this->roles()->where('slug',$roleSlug)->count()==1;
+        return $this->roles()->where('name', $roleName)->exists();
     }
 }

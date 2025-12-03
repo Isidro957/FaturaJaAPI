@@ -14,7 +14,7 @@ class AreaSeeder extends Seeder
     public function run(): void
     {
         $author= Areas::create([
-            'org_id'  => '1',
+            'emp_id'  => '1',
             'name_area' => 'Secretaria Geral',
             'slogan_area' => 'SG',
             'telefone_area' => '941492785',

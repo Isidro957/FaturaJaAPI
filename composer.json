@@ -10,9 +10,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "auth0/login": "dev-main",
+        "barryvdh/laravel-dompdf": "^3.1",
+        "firebase/php-jwt": "^6.11",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "laravel/ui": "^4.6",
+        "maatwebsite/excel": "*",
         "nativephp/electron": "^1.0"
     },
     "require-dev": {
@@ -79,6 +83,6 @@
             "php-http/discovery": true
         }
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }

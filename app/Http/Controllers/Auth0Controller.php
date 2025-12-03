@@ -10,28 +10,66 @@ use GuzzleHttp\Client;
 class Auth0Controller extends Controller
 {
     /**
-     * Redireciona o usuário para a página de login do Auth0
+     * Exibe a tela de login personalizada
      */
-    public function login(Request $request)
+    public function showLoginPage()
     {
-        $slug = $request->input('slug'); // Pode vir do front-end
+        return view('login'); 
+    }
 
-        // Armazena temporariamente o slug na sessão
-        if ($slug) {
-            session(['tenant_slug' => $slug]);
+    /**
+     * Login direto para os providers
+     */
+    public function loginGoogle(Request $request)
+    {
+        return $this->redirectToProvider('google-oauth2', $request);
+    }
+
+    public function loginGithub(Request $request)
+    {
+        return $this->redirectToProvider('github', $request);
+    }
+
+    public function loginLinkedin(Request $request)
+    {
+        return $this->redirectToProvider('linkedin', $request);
+    }
+
+    /**
+     * Redireciona para o provider correto
+     */
+    public function redirect($provider, Request $request)
+    {
+        switch ($provider) {
+            case 'google':
+                return $this->loginGoogle($request);
+            case 'github':
+                return $this->loginGithub($request);
+            case 'linkedin':
+                return $this->loginLinkedin($request);
+            default:
+                abort(404, 'Provider inválido');
+        }
+    }
+
+    /**
+     * Função privada que constrói a URL e redireciona
+     */
+    private function redirectToProvider($connection, Request $request)
+    {
+        if ($request->has('slug')) {
+            session(['tenant_slug' => $request->slug]);
         }
 
         $auth0 = config('auth0');
 
-        // ========================
-        // URL de autorização com prompt=login
-        // ========================
-        $authorizeUrl = 'https://' . $auth0['domain'] . '/authorize' .
-            '?response_type=code' .
-            '&client_id=' . $auth0['client_id'] .
-            '&redirect_uri=' . urlencode($auth0['redirect_uri']) .
-            '&scope=' . urlencode($auth0['scope']) .
-            '&prompt=login'; // força o login
+        $authorizeUrl = 'https://' . $auth0['domain'] . '/authorize?' . http_build_query([
+            'response_type' => 'code',
+            'client_id'     => $auth0['client_id'],
+            'redirect_uri'  => $auth0['redirect_uri'],
+            'scope'         => $auth0['scope'],
+            'connection'    => $connection,
+        ]);
 
         return redirect()->to($authorizeUrl);
     }
@@ -41,18 +79,14 @@ class Auth0Controller extends Controller
      */
     public function callback(Request $request)
     {
-       
-
         $client = new Client();
         $auth0 = config('auth0');
 
-        // Verifica se veio código
         if (!$request->has('code')) {
             return redirect()->route('login')->withErrors(['auth' => 'Código de autorização não fornecido.']);
         }
 
         try {
-            // Troca o "code" pelo "access_token"
             $response = $client->post('https://' . $auth0['domain'] . '/oauth/token', [
                 'form_params' => [
                     'grant_type'    => 'authorization_code',
@@ -67,59 +101,35 @@ class Auth0Controller extends Controller
             $accessToken = $data['access_token'] ?? null;
 
             if (!$accessToken) {
-                return redirect()->route('login')->withErrors(['auth' => 'Falha ao obter access token.']);
+                return redirect()->route('login')->withErrors(['auth' => 'Falha ao obter Access Token.']);
             }
 
-            // Buscar perfil do usuário no Auth0
             $userResponse = $client->get('https://' . $auth0['domain'] . '/userinfo', [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $accessToken,
-                ],
+                'headers' => ['Authorization' => 'Bearer ' . $accessToken],
             ]);
 
-            $user = json_decode($userResponse->getBody(), true);
+            $authUser = json_decode($userResponse->getBody(), true);
 
-        } catch (\GuzzleHttp\Exception\RequestException $e) {
-            return redirect()->route('login')->withErrors(['auth' => 'Erro no Auth0: ' . $e->getMessage()]);
+        } catch (\Exception $e) {
+            return redirect()->route('login')->withErrors(['auth' => 'Erro Auth0: ' . $e->getMessage()]);
         }
 
-        // Pega roles do namespace personalizado
-        $roles = $user['https://faturaja.com/roles'] ?? [];
-
-        // -----------------------------
-        // BUSCAR O TENANT PELO SLUG
-        // -----------------------------
-        $slug = session('tenant_slug');
-        $tenant = Tenant::where('slug', $slug)->first();
-
-        if (!$tenant) {
-            return redirect()->route('login')->withErrors(['slug' => 'Tenant não encontrado.']);
-        }
-
-        // --------------------------------------------
-        // SINCRONIZAR O USUÁRIO COM A BASE DE DADOS
-        // --------------------------------------------
+        // Sincroniza usuário e roles com a base local
         $syncService = new Auth0SyncService();
-        $dbUser = $syncService->sync($user, $tenant->id);
+        $dbUser = $syncService->sync($authUser);
 
-        // --------------------------------------------
-        // GUARDAR SESSÃO LOCAL
-        // --------------------------------------------
+        // Salva sessão
         session([
-            'auth0_user'  => $user,
-            'auth0_roles' => $roles,
+            'auth0_user'  => $authUser,
+            'auth0_roles' => $authUser['https://faturaja.com/roles'] ?? [],
             'auth_user'   => $dbUser,
-            'tenant'      => $tenant,
         ]);
-dd('Chegou ao fim do callback', $user);
+
         return redirect()->route('dashboard');
-        
-
-
     }
 
     /**
-     * Logout do usuário
+     * Logout
      */
     public function logout()
     {
@@ -127,9 +137,10 @@ dd('Chegou ao fim do callback', $user);
 
         $auth0 = config('auth0');
 
-        $logoutUrl = 'https://' . $auth0['domain'] . '/v2/logout' .
-            '?client_id=' . $auth0['client_id'] .
-            '&returnTo=' . urlencode(config('app.url'));
+        $logoutUrl = 'https://' . $auth0['domain'] . '/v2/logout?' . http_build_query([
+            'client_id' => $auth0['client_id'],
+            'returnTo'  => config('app.url'),
+        ]);
 
         return redirect()->to($logoutUrl);
     }

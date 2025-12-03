@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - FaturaJá</title>
-    <!-- Bootstrap CDN -->
+
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         body {
             background-color: #C9F5D7;
@@ -14,96 +16,118 @@
             display: flex;
             flex-direction: column;
         }
+
         header {
             background-color: #C9B6E4;
             padding: 1rem 2rem;
             color: #fff;
         }
+
         main {
             flex: 1;
             padding: 2rem;
         }
+
         .card {
             background-color: #fff;
             border-radius: 15px;
             padding: 1.5rem;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
             margin-bottom: 2rem;
         }
-        a.logout-btn {
-            display: inline-block;
-            margin-top: 1rem;
-            background-color: #C9B6E4;
-            color: #fff;
+
+        .logout-btn {
+            background-color: #fff;
+            color: #6B4FA3;
             padding: 0.5rem 1rem;
             border-radius: 8px;
+            font-weight: bold;
             text-decoration: none;
-            transition: background-color 0.3s;
+            transition: 0.3s;
         }
-        a.logout-btn:hover {
-            background-color: #b494d4;
+
+        .logout-btn:hover {
+            background-color: #f1e8ff;
         }
+
         .roles-list li {
             display: inline-block;
             background-color: #C9B6E4;
             color: #fff;
-            padding: 0.3rem 0.7rem;
+            padding: 0.35rem 0.8rem;
             margin: 0.2rem;
-            border-radius: 5px;
-            font-weight: bold;
+            border-radius: 6px;
+            font-weight: 600;
         }
+
         .area-link {
             display: inline-block;
-            margin: 0.3rem 0.5rem 0.3rem 0;
-            padding: 0.5rem 1rem;
+            margin: 0.3rem;
+            padding: 0.6rem 1.2rem;
             background-color: #C9B6E4;
             color: #fff;
             border-radius: 8px;
+            font-weight: 600;
             text-decoration: none;
-            transition: background-color 0.3s;
+            transition: 0.3s;
         }
+
         .area-link:hover {
             background-color: #b494d4;
         }
+
         .avatar {
-            width: 80px;
-            height: 80px;
+            width: 85px;
+            height: 85px;
             border-radius: 50%;
+            object-fit: cover;
             margin-right: 1rem;
         }
+
         .user-info {
             display: flex;
             align-items: center;
         }
     </style>
 </head>
+
 <body>
+
+    <!-- Header -->
     <header class="d-flex justify-content-between align-items-center">
         <h1>FaturaJá Dashboard</h1>
         <a href="{{ route('logout') }}" class="logout-btn">Logout</a>
     </header>
 
+    <!-- Conteúdo -->
     <main class="container">
-        <!-- Perfil do usuário -->
+
+        <!-- Card Perfil -->
         <div class="card">
             <div class="user-info">
-                @if(!empty($user['picture']))
-                    <img src="{{ $user['picture'] }}" alt="Avatar" class="avatar">
+                @if(isset($user['picture']))
+                    <img src="{{ $user['picture'] }}" class="avatar" alt="Foto do usuário">
                 @endif
+
                 <div>
                     <h2>{{ $user['name'] ?? $user['email'] }}</h2>
-                    <p>Email: {{ $user['email'] ?? 'Não disponível' }}</p>
+                    <p>Email: <strong>{{ $user['email'] }}</strong></p>
                 </div>
             </div>
         </div>
 
-        <!-- Roles -->
+        <!-- Card Roles -->
         <div class="card">
             <h3>Suas Roles</h3>
-            @if(session('auth0_roles') && count(session('auth0_roles')) > 0)
+
+            @php
+                $roles = session('auth0_roles') ?? [];
+            @endphp
+
+            @if(count($roles) > 0)
                 <ul class="roles-list">
-                    @foreach(session('auth0_roles') as $role)
-                        <li>{{ $role }}</li>
+                    @foreach($roles as $r)
+                        <li>{{ $r }}</li>
                     @endforeach
                 </ul>
             @else
@@ -111,26 +135,9 @@
             @endif
         </div>
 
-        <!-- Áreas do dashboard baseadas em roles -->
+        <!-- Áreas baseadas em roles -->
         <div class="card">
-            <h3>Áreas do Dashboard</h3>
-@php
-    $roles = session('auth0_roles') ?? [];
-@endphp
-
-
-<h3>Suas Roles</h3>
-
-@if(count($roles) > 0)
-    <ul>
-        @foreach($roles as $role)
-            <li>{{ $role }}</li>
-        @endforeach
-    </ul>
-@else
-    <p>Você não possui roles atribuídas.</p>
-@endif
-
+            <h3>Áreas do Sistema</h3>
 
             @if(in_array('Admin', $roles))
                 <a href="/admin-area" class="area-link">Área Administrativa</a>
@@ -144,17 +151,12 @@
                 <a href="/cliente-area" class="area-link">Área do Cliente</a>
             @endif
 
-            @if(empty($user['roles']))
-    Você não possui roles atribuídas.
-@endif
-
+            @if(count($roles) === 0)
+                <p>Não há áreas disponíveis para você.</p>
+            @endif
         </div>
-        <!-- Debug: Exibir todos os dados da sessão
-        <pre>
-            {{ print_r(session()->all(), true) }}
-        </pre>
-        -->
 
     </main>
+
 </body>
 </html>
